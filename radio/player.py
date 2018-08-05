@@ -411,7 +411,24 @@ class Player():
             lines.append(self.format_song(song))
         return "\n".join(lines)
 
+    def eneque_playlist(self, playlist, clear=True):
+        """
+        Load playlist into queue. Clear it per default
+        """
+        if clear:
+            self.clear()
+            self.load(playlist.name)
+        else:
+            self.load(playlist.name)
 
+    def save_playlist(self, name):
+        self.save(name)
+
+    def delete_playlist(self, name):
+        self.rm(name)
+
+    def rename_playlist(self, name):
+        self.rename(name)
 
 
 
