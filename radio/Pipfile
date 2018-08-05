@@ -9,6 +9,7 @@ name = "pypi"
 pika = "*"
 pokeball = "*"
 "python-mpd2" = "*"
+arrow = "*"
 
 [requires]
 python_version = "3.6"
