@@ -1,0 +1,453 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"write",
+				"write_config"
+			],
+			[
+				"UPLOADS",
+				"UPLOADS_DEFAULT_URL"
+			],
+			[
+				"UPLOADS_DEFAUL",
+				"UPLOADS_DEFAULT_URL"
+			],
+			[
+				"req",
+				"request"
+			],
+			[
+				"has",
+				"hasi_namen"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "Packages/Rust Enhanced/RustEnhanced.sublime-build",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					""
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Automatic"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Run (with args)..."
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Check"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Test"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Test (with args)..."
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Bench"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Document"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Clippy"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Script"
+				]
+			],
+			[
+				"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+				"Automatic"
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"canc",
+				"Build: Cancel"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"rena",
+				"Rename File"
+			],
+			[
+				"c",
+				"Build: Cancel"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"renam",
+				"Rename File"
+			],
+			[
+				"ca",
+				"Build: Cancel"
+			],
+			[
+				"uuid",
+				"Generate single UUID v4"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"canel",
+				"Build: Cancel"
+			],
+			[
+				"flask",
+				"Snippet: Flask"
+			],
+			[
+				"Flask",
+				"Snippet: Flask"
+			],
+			[
+				"term",
+				"Terminal: Open"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"INST",
+				"Package Control: Install Package"
+			],
+			[
+				"pip",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: inst",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 136.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/atoav/radio/radio"
+	],
+	"file_history":
+	[
+		"/home/atoav/Blender/watchdog/Cargo.toml",
+		"/home/atoav/Blender/notes.md",
+		"/home/atoav/Blender/flaskbender/notes.md",
+		"/home/atoav/Blender/flaskbender/flaskbender/static/js/upload.js",
+		"/home/atoav/Blender/flaskbender/flaskbender/templates/base.html",
+		"/home/atoav/.config/sublime-text-3/Local/Session.sublime_session",
+		"/home/atoav/Blender/flaskbender/flaskbender/helpers.py",
+		"/home/atoav/Blender/flaskbender/flaskbender/config.py",
+		"/home/atoav/Blender/flaskbender/flaskbender/app.py",
+		"/home/atoav/Blender/flaskbender/helpers.py",
+		"/home/atoav/Blender/flaskbender/config.py",
+		"/home/atoav/Blender/watchdog/src/main.rs",
+		"/home/atoav/Blender/flaskbender/app.py",
+		"/media/sf_mint/Blender/eval_rabbitmq/notes.md",
+		"/media/sf_mint/Blender/flaskbender/notes.md",
+		"/media/sf_mint/Blender/flaskbender/config.py",
+		"/media/sf_mint/Blender/flaskbender/helpers.py",
+		"/media/sf_mint/Blender/flaskbender/static/js/upload.js",
+		"/media/sf_mint/Blender/flaskbender/templates/index.html",
+		"/media/sf_mint/Blender/flaskbender/templates/base.html",
+		"/media/sf_mint/Blender/flaskbender/app.py",
+		"/usr/share/blender/scripts/modules/progress_report.py",
+		"/home/atoav/.config/sublime-text-3/Packages/User/SideBarEnhancements/Open With/Side Bar.sublime-menu",
+		"/media/sf_mint/Blender/flaskbender/static/css/fonts.css",
+		"/media/sf_mint/Blender/flaskbender/static/css/style.css",
+		"/media/sf_mint/Blender/flaskbender/templates/404.html",
+		"/media/sf_mint/Blender/flaskbender/logger.py",
+		"/media/sf_mint/Blender/flaskbender/templates/celery.html",
+		"/media/sf_mint/Blender/flask-celery-example/app.py",
+		"/media/sf_mint/Blender/flask-celery-example/run-redis.sh",
+		"/etc/redis/6379.conf",
+		"/media/sf_mint/Blender/flaskbender/templates/nonexisting_job.html",
+		"/media/sf_mint/Blender/flaskbender/templates/job.html",
+		"/media/sf_mint/Blender/qu/blendfiles/loadtestÖ sterreich  .blend",
+		"/media/sf_mint/Blender/eval_rabbitmq/competing_consumers/worker.py",
+		"/media/sf_mint/Blender/eval_rabbitmq/competing_consumers/new_task.py",
+		"/media/sf_mint/Blender/eval_rabbitmq/hello_world/send.py",
+		"/media/sf_mint/Blender/flaskbender/.gitignore",
+		"/media/sf_mint/Blender/flaskbender/upload.py",
+		"/media/sf_mint/Blender/flaskbender/private/appsecret",
+		"/media/sf_mint/Blender/flaskbender/static/style.css",
+		"/home/atoav/.config/sublime-text-3/Packages/User/Python 3 (Flask with pipenv).sublime-build",
+		"/home/atoav/.config/sublime-text-3/Packages/User/Python 3 (pipenv).sublime-build",
+		"/media/sf_mint/Blender/Blender.sublime-project",
+		"/media/sf_mint/Blender/mqtesting/send.py",
+		"/media/sf_mint/Blender/mqtesting/recieve.py",
+		"/home/atoav/.config/sublime-text-3/Packages/User/python3.sublime-build",
+		"/home/atoav/Coding/fons/app/models.py",
+		"/home/atoav/Coding/fons/app/__init__.py",
+		"/home/atoav/Coding/fons/app/forms.py",
+		"/home/atoav/Coding/fons/app/templates/base.html",
+		"/home/atoav/Coding/fons/app/templates/index.html",
+		"/home/atoav/Coding/fons/config.py",
+		"/home/atoav/Coding/fons/app/routes.py",
+		"/home/atoav/Coding/fons/fons.py",
+		"/home/atoav/Coding/fons/app/templates/login.html",
+		"/home/atoav/Coding/fons/app.db",
+		"/home/atoav/Coding/fons/routes.py"
+	],
+	"find":
+	{
+		"height": 26.0
+	},
+	"find_in_files":
+	{
+		"height": 103.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"Blender.sublime",
+			"Blender",
+			"project",
+			"data.json",
+			"get_app",
+			"arrow",
+			"list_userjobs",
+			"$('#blendfile')",
+			"UploadFile",
+			"this).prev('label'",
+			"this).prev('label').",
+			"this).prev('label'",
+			"this).prev('label').",
+			"this).prev('label'",
+			"prev",
+			"fonts",
+			"logging",
+			"redis",
+			"index",
+			"template",
+			"append_to_cookies",
+			"jobs",
+			"existingjobs",
+			":\n",
+			"dir",
+			"blendfiles",
+			"creation",
+			"RESET",
+			"\"Uploadlimit in Gb\"",
+			"uploadlimit",
+			"WHITE",
+			"Upload Folder",
+			"Paths",
+			"private",
+			"Private Directory",
+			"household_animal",
+			")",
+			"(",
+			"create",
+			"naval_fate",
+			"json",
+			"configpath",
+			"json",
+			"messages",
+			"submit",
+			"directory",
+			"pfile",
+			"'",
+			"Hello dsss!",
+			"gebaeude",
+			"rufnummer",
+			"member",
+			"teamform",
+			"rufnummer"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 43.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 322.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/User/Python 3 (pipenv).sublime-build",
+	"project": "radio.sublime-project",
+	"replace":
+	{
+		"height": 48.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Blender/Blender.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 203.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
