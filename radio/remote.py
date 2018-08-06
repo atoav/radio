@@ -2,7 +2,7 @@
 import pika
 import sys
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='radio.fritz.box'))
 channel = connection.channel()
 
 channel.exchange_declare(exchange='topics', exchange_type='topic')
@@ -15,6 +15,6 @@ if not routing_keys:
 routing_key = routing_keys[0]
 
 message = ' '.join(sys.argv[2:]) or ''
-channel.basic_publish(exchange='topic_logs', routing_key=routing_key, body=message)
+channel.basic_publish(exchange='topics', routing_key=routing_key, body=message)
 print(" [x] Sent %r:%r" % (routing_key, message))
 connection.close()

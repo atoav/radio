@@ -456,7 +456,7 @@ class MQPlayer(Player):
 
         result = channel.queue_declare(exclusive=True)
         queue_name = result.method.queue
-        channel.queue_bind(exchange='topic_logs', queue=queue_name, routing_key="player.*")
+        channel.queue_bind(exchange='topics', queue=queue_name, routing_key="player.*")
         channel.basic_consume(self.consume, queue=queue_name, no_ack=True)
 
         channel.start_consuming()
