@@ -11,6 +11,13 @@ import os
 import arrow
 import logging
 import errno
+import pika
+
+
+
+
+
+
 
 
 
@@ -325,9 +332,16 @@ class Player():
         elif songpos > self.queuelength:
             self.logger.warning("[▶][❌]:Couldn't play song at ["+str(songpos)+"]. The biggest index is "+str(self.queuelength))
         else:
-            self.client.play(songpos)
-            self.client.update()
-            self.logger.info("[▶]["+str(songpos)+"]: "+str(self.currentsong_formatted))
+            try:
+                self.client.play(songpos)
+                self.client.update()
+                self.logger.info("[▶]["+str(songpos)+"]: "+str(self.currentsong_formatted))
+            except CommandError as e:
+                if "Not seekable" in str(e):
+                    self.client.play()
+                    self.logger.warning("[▶][❌]: "+str(e))
+                else:
+                    self.logger.warning("[▶][❌]: "+str(e))
 
     def stop(self):
         self.client.stop()
@@ -431,16 +445,60 @@ class Player():
         self.rename(name)
 
 
+class MQPlayer(Player):
+    def __init__(self):
+        Player.__init__(self)
+
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        channel = connection.channel()
+
+        channel.exchange_declare(exchange='topics', exchange_type='topic')
+
+        result = channel.queue_declare(exclusive=True)
+        queue_name = result.method.queue
+        channel.queue_bind(exchange='topic_logs', queue=queue_name, routing_key="player.*")
+        channel.basic_consume(self.consume, queue=queue_name, no_ack=True)
+
+        channel.start_consuming()
+        
+
+    def consume(self, channel, method, properties, body):
+        routing_keys = method.routing_key.split(".")
+        body = body.decode("utf-8")
+
+        if routing_keys[1] == "stop": self.stop()
+        if routing_keys[1] == "status": self.stop()
+        if routing_keys[1] == "stats": self.stats()
+        if routing_keys[1] == "play": self.play()
+        if routing_keys[1] == "pause":
+            if body == "":
+                self.pause()
+            elif body == "toggle":
+                self.toggle_pause()
+        if routing_keys[1] == "stop": self.stop()
+        if routing_keys[1] == "next": self.next()
+        if routing_keys[1] == "previous": self.previous()
+        if routing_keys[1] == "enqueue": self.enqueue(body)
+        if routing_keys[1] == "dequeue": self.dequeue(body)
+
+
+
+
+
+
 
 
 
 if __name__ == "__main__":
     logging.basicConfig(format=('[%(levelname)-8s]:\t')+('%(message)s'), level=logging.INFO)
     # basepath = "/var/lib/mpd/playlists/"
+    
 
-    player = Player()
+
+    player = MQPlayer()
     player.clear()
-    # player.volume = 100
+    
+    player.volume = 100
     # player.enqueue("http://mp3stream1.apasf.apa.at:8000")
     # player.enqueue("http://mp3stream3.apasf.apa.at:8000")
     # player.enqueue("http://st02.dlf.de/dlf/02/128/mp3/stream.mp3")

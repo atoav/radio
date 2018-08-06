@@ -7,7 +7,6 @@ name = "pypi"
 
 [packages]
 pika = "*"
-pokeball = "*"
 "python-mpd2" = "*"
 arrow = "*"
 

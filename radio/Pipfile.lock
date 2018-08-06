@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7b0765989c6d1d3dd0f5c2cd15529c356ec3493ce14eda43e3a177c7912c6249"
+            "sha256": "4afc06bd8140aa9add1eec27848574ea5e5c877141b98270bc5b042522ac66b2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -30,13 +30,6 @@
             ],
             "index": "pypi",
             "version": "==0.12.0"
-        },
-        "pokeball": {
-            "hashes": [
-                "sha256:8a07a1f69e43dd150ef2151200bad5f5b00ec13ecfe6a2b5de31bb25fccc3534"
-            ],
-            "index": "pypi",
-            "version": "==0.4"
         },
         "python-dateutil": {
             "hashes": [

@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"playli",
+				"playlistlength"
+			],
+			[
+				"playl",
+				"playlistinfo"
+			],
+			[
 				"write",
 				"write_config"
 			],
@@ -27,6 +35,45 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "notes.md",
+			"settings":
+			{
+				"buffer_size": 193,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "#!/usr/bin/env python3.6\n# -*- coding: utf-8 -*-\n#!/usr/bin/env python3.6\n# -*- coding: utf-8 -*-\n\nfrom mpd import MPDClient\nfrom mpd.base import CommandError\nfrom collections import OrderedDict\nimport time\nimport os\nimport arrow\nimport logging\nimport errno\nfrom pokeball import sub, pub\n\n\n\nclass Player():\n    def __init__(self):\n        self.logger= logging.getLogger(__name__)\n        client = MPDClient()\n        client.timeout = 10\n        client.idletimeout = None\n        client.connect(\"localhost\", 6600)\n        self.logger.info(\"Started Player\")\n        self.client = client\n\n    def close(self):\n        self.client.close()\n        self.client.disconnect()\n\n    @property\n    def status(self):\n        return self.client.status()\n\n    @property\n    def stats(self):\n        self.client.update()\n        return self.client.stats()\n\n    @property\n    def artists(self):\n        \"\"\"\n        The number of Artists\n        \"\"\"\n        return int(self.stats[\"artists\"])\n\n    @property\n    def albums(self):\n        \"\"\"\n        The number of Albums\n        \"\"\"\n        return int(self.stats[\"albums\"])\n\n    @property\n    def n_songs(self):\n        \"\"\"\n        The number of songs\n        \"\"\"\n        return int(self.stats[\"songs\"])\n\n    @property\n    def uptime(self):\n        \"\"\"\n        Daemon uptime in seconds\n        \"\"\"\n        return int(self.stats[\"uptime\"])\n\n    @property\n    def total_playtime(self):\n        \"\"\"\n        The sum of all songs in the db\n        \"\"\"\n        return int(self.stats[\"db_playtime\"])\n\n    @property\n    def last_update(self):\n        \"\"\"\n        The sum of all songs in the db\n        \"\"\"\n        return arrow.get(int(self.stats[\"db_update\"]))\n\n    @property\n    def currentsong(self):\n        return self.client.currentsong()\n\n    @property\n    def currentsong_formatted(self):\n        return self.format_song(self.currentsong)\n\n    def format_song(self, songdict):\n        position = songdict[\"pos\"].zfill(4)\n        song_id = songdict[\"id\"]\n        file = songdict[\"file\"]\n        name = songdict[\"name\"] if \"name\" in songdict.keys() else \"\"\n        title = songdict[\"title\"] if \"title\" in songdict.keys() else \"\"\n        string = \"[\"+str(position)+\"][ID: \"+str(song_id)+\"] \"+(name+\" \"+title).strip()+\" (File: \"+str(file)+\")\"\n        return string\n\n    @property\n    def stopped(self):\n        return self.status[\"status\"] == \"stop\"\n\n    @property\n    def paused(self):\n        return self.status[\"state\"] == \"pause\"\n\n    @property\n    def playing(self):\n        return self.status[\"state\"] == \"play\"\n\n    @property\n    def currentindex(self):\n        \"\"\"\n        Queue Index number of the current song stopped or playing\n        \"\"\"\n        try:\n            return int(self.status[\"song\"])\n        except KeyError:\n            return None\n\n    @property\n    def songid(self):\n        \"\"\"\n        Queue Song ID of the current song stopped or playing\n        \"\"\"\n        return int(self.status[\"songid\"])\n\n    @property\n    def nextsong(self):\n        \"\"\"\n        Queue Song number of the current song stopped or playing\n        \"\"\"\n        try:\n            return int(self.status[\"nextsong\"])\n        except KeyError:\n            return None\n\n    @property\n    def nextsongid(self):\n        \"\"\"\n        Queue Song ID of the current song stopped or playing\n        \"\"\"\n        try:\n            return int(self.status[\"nextsongid\"])\n        except KeyError:\n            return None\n\n    @property\n    def elapsed(self):\n        \"\"\"\n        Total time elapsed within the current song\n        \"\"\"\n        return self.status[\"elapsed\"]\n\n    @property\n    def duration(self):\n        \"\"\"\n        Total tduration of the current song\n        \"\"\"\n        return self.status[\"duration\"]\n\n    @property\n    def queuelength(self):\n\n        return int(self.status[\"playlistlength\"])\n\n    @property\n    def seek(self, songpos, time):\n        \"\"\"\n        Seeks to the position TIME (in seconds; fractions allowed) of entry SONGPOS in the playlist.\n        \"\"\"\n        self.client.seek(songpos, time)\n\n    @property\n    def seekid(self, songid, time):\n        \"\"\"\n        Seeks to the position TIME (in seconds; fractions allowed) of song SONGID.\n        \"\"\"\n        self.client.seekid(songid, time)\n\n    @property\n    def seekcurrent(self, time):\n        \"\"\"\n        Seeks to the position TIME (in seconds; fractions allowed) within the current song. If prefixed by ‘+’ or ‘-‘, then the time is relative to the current playing position.\n        \"\"\"\n        self.client.seekcur(time)\n\n    @property\n    def volume(self):\n        return int(self.status[\"volume\"])\n\n    @volume.setter\n    def volume(self, value):\n        if value > 100: value = 100\n        if value < 0: value = 0\n        pvol = self.volume\n        self.client.setvol(value)\n        if value == 0:\n            self.logger.info(\"[🔈]: Set volume to \"+str(value))\n        elif pvol > value:\n            self.logger.info(\"[🔉]: Decreased volume to \"+str(value))\n        else:\n            self.logger.info(\"[🔊] Increased volume to \"+str(value))\n\n    @property\n    def repeat(self):\n        return int(self.status[\"repeat\"]) == 1\n\n    @repeat.setter\n    def repeat(self, value):\n        if value:\n            self.client.repeat(1)\n            self.logger.info(\"[⭯]: Repeat set True\")\n        else:\n            self.client.repeat(0)\n            self.logger.info(\"[➝]: Repeat set False\")\n\n    @property\n    def consume(self):\n        return int(self.status[\"consume\"]) == 1\n\n    @consume.setter\n    def consume(self, value):\n        if value:\n            self.client.consume(1)\n            self.logger.info(\"[⚺]: Consume set True\")\n        else:\n            self.client.consume(0)\n            self.logger.info(\"[⚻]: Consume set False\")\n\n    @property\n    def random(self):\n        return int(self.status[\"random\"]) == 1\n\n    @random.setter\n    def random(self, value):\n        if value:\n            self.client.random(1)\n            self.logger.info(\"[🔀]: Random set True\")\n        else:\n            self.client.random(0)\n            self.logger.info(\"[⮆]: Random set False\")\n\n    @property\n    def single(self):\n        return int(self.status[\"single\"]) == 1\n\n    @single.setter\n    def single(self, value):\n        if value:\n            self.client.single(1)\n            self.logger.info(\"[⭲]: Single set True\")\n        else:\n            self.client.single(0)\n            self.logger.info(\"[⮒]: Single set False\")\n\n    @property\n    def replay_gain_mode(self):\n        return self.client.replay_gain_status()\n\n    @replay_gain_mode.setter\n    def replay_gain_mode(self, mode):\n        mode = mode.strip().lower()\n        options = [\"off\", \"track\", \"album\", \"auto\"]\n        if mode in options:\n            self.client.replay_gain_mode(mode)\n            self.logger.info(\"[🎛]: Set Replay Gain Mode to \"+str(mode))\n        else:\n            self.logger.warning(\"[🎛][❌]: client.replay_gain_mode has no option \"+str(mode)+\". Available options are: \"+\", \".join(options))\n\n    def next(self):\n        \"\"\"\n        Switch to the next song in the queue\n        Catch out of bounds\n        \"\"\"\n        pindex = self.currentindex\n        if self.currentindex is None:\n            self.play()\n        elif self.currentindex < self.queuelength-1:\n            try:\n                self.client.next()\n                self.client.update()\n                self.logger.info(\"[⏭][\"+str(pindex)+\"]->[\"+str(self.currentindex)+\"]: Switched to next song: \"+str(self.currentsong_formatted))\n            except CommandError as e:\n                self.logger.warning(\"[⏭][❌]: \"+str(e))\n        else:\n            self.logger.warning(\"[⏭][❌]: Couldn't switch to next song. Would be out of index.. (\"+str(self.currentindex+1)+\" would be >= \"+str(self.queuelength-1)+\")\")\n\n    def previous(self):\n        \"\"\"\n        Switch to the previous song in the queue\n        Catch out of bounds\n        \"\"\"\n        pindex = self.currentindex\n        if self.currentindex > 0:\n            self.client.previous()\n            self.client.update()\n            self.logger.info(\"[⏮][\"+str(self.currentindex)+\"]<-[\"+str(pindex)+\"]: Switched to previous song : \"+str(self.currentsong_formatted))\n        else:\n            self.logger.warning(\"[⏮][❌]: Couldn't switch to previous song. Would be out of index (\"+str(self.currentindex-1)+\" would be < 0)\")\n\n    def pause(self):\n        self.client.pause(1)\n        self.logger.info(\"[⏸]: Paused Playback\")\n\n    def unpause(self):\n        self.client.pause(0)\n        self.logger.info(\"[⏯]: Unpaused Playback\")\n\n    def toggle_pause(self):\n        if self.paused:\n            self.unpause()\n        else:\n            self.pause()\n\n    def play(self, songpos=None):\n        if songpos is None and self.currentindex is None:\n            songpos = 0\n        elif songpos is None:\n            songpos = self.currentindex\n        if self.queuelength == 0:\n            self.logger.warning(\"[▶][❌]:Couldn't start playing. There are no songs..\")\n        elif songpos < 0:\n            self.logger.warning(\"[▶][❌]:Couldn't play song at [\"+str(songpos)+\"]!\")\n        elif songpos > self.queuelength:\n            self.logger.warning(\"[▶][❌]:Couldn't play song at [\"+str(songpos)+\"]. The biggest index is \"+str(self.queuelength))\n        else:\n            self.client.play(songpos)\n            self.client.update()\n            self.logger.info(\"[▶][\"+str(songpos)+\"]: \"+str(self.currentsong_formatted))\n\n    def stop(self):\n        self.client.stop()\n        self.logger.info(\"[⯀]: Stopped Playback\")\n\n    def enqueue(self, uri):\n        \"\"\"\n        Adds the file URI to the queue (directories add recursively). URI can also be a single file.\n        \"\"\"\n        self.client.add(uri)\n        self.client.idle()\n        self.logger.info(\"[➕]: Enqueued song(s) with URI (\"+str(uri)+\")\")\n\n    def dequeue(self, uri):\n        \"\"\"\n        Dequeue a song by uri.\n        \"\"\"\n        self.deleteuri(uri)\n\n    def enqueueid(self, uri, position):\n        \"\"\"\n        Adds a song to the queue (non-recursive) and returns the song id.\n        URI is always a single file or URL. For example: foo.mp3\n        \"\"\"\n        self.client.addid(uri, position)\n        self.logger.info(\"[➕]: Enqueued song with ID (\"+str(uri)+\") at position [\"+str(position)+\"]\")\n\n    def clear(self):\n        \"\"\"\n        Clear the current queue\n        \"\"\"\n        self.client.clear()\n        self.logger.info(\"[◠]: Cleared the current queue\")\n\n    def delete(self, songpos):\n        \"\"\"\n        Delete a song from the queue by position\n        \"\"\"\n        self.client.delete(songpos)\n        self.logger.info(\"[➖]: Deleted song at position [\"+str(songpos)+\"]\")\n\n    def deleteuri(self, uri):\n        matches = [song[\"id\"] for song in self.queue if uri in song[\"file\"]]\n        for match in matches:\n            self.deleteid(match)\n\n    def deleteid(self, songid):\n        self.client.deleteid(songid)\n        self.logger.info(\"[➖]: Deleted song with ID (\"+str(songid)+\")\")\n\n    def move(self, source, targetposition):\n        \"\"\"\n        Moves the song at FROM or range of songs at START:END to TO in the queue.\n        \"\"\"\n        self.client.move(source, targetposition)\n        self.logger.info(\"[⮓]: Moved song(s) from [\"+str(source)+\"] to [\"+str(targetposition)+\"]\")\n\n    def moveid(self, songid, targetposition):\n        \"\"\"\n        Moves the song with FROM (songid) to TO (queue index) in the queue. \n        If TO is negative, it is relative to the current song in the queue (if there is one).\n        \"\"\"\n        self.client.moveid(songid, targetposition)\n        self.logger.info(\"[⮓]: Moved song(s) with ID (\"+str(songid)+\") to [\"+str(targetposition)+\"]\")\n\n    @property\n    def queue(self, songpos=\"\"):\n        \"\"\"\n        Return a list of dicts for all songs in the queue, or if the optional argument is given, \n        displays information only for the song SONGPOS or the range of songs START:END\n        \"\"\"\n        if songpos == \"\":\n            return self.client.playlistinfo()\n        else:\n            return self.client.playlistinfo(songpos)\n\n    @property\n    def queue_formatted(self):\n        lines = []\n        for song in self.queueinfo:\n            lines.append(self.format_song(song))\n        return \"\\n\".join(lines)\n\n    def eneque_playlist(self, playlist, clear=True):\n        \"\"\"\n        Load playlist into queue. Clear it per default\n        \"\"\"\n        if clear:\n            self.clear()\n            self.load(playlist.name)\n        else:\n            self.load(playlist.name)\n\n    def save_playlist(self, name):\n        self.save(name)\n\n    def delete_playlist(self, name):\n        self.rm(name)\n\n    def rename_playlist(self, name):\n        self.rename(name)\n\n\nclass MQPlayer(Player):\n    def __init__(self):\n        Player.__init__(self)\n        # consume = sub.get_subscriber(binding_keys=[\"player.#\"])\n        # consume(self.consume)\n\n    def consume(self, message):\n        print(message)\n\n\n\n\n\nif __name__ == \"__main__\":\n    logging.basicConfig(format=('[%(levelname)-8s]:\\t')+('%(message)s'), level=logging.INFO)\n    # basepath = \"/var/lib/mpd/playlists/\"\n    # pub.send_message(\"This is a test message\", routing_key='player.test')\n    player = MQPlayer()\n    player.clear()\n\n    # player.volume = 100\n    # player.enqueue(\"http://mp3stream1.apasf.apa.at:8000\")\n    # player.enqueue(\"http://mp3stream3.apasf.apa.at:8000\")\n    # player.enqueue(\"http://st02.dlf.de/dlf/02/128/mp3/stream.mp3\")\n    # player.enqueue(\"http://st01.dlf.de/dlf/01/128/mp3/stream.mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/groovesalad-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/lush-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/sonicuniverse-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/missioncontrol-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/illstreet-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/suburbsofgoa-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/u80s-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/7soul-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/secretagent-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/cliqhop-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/fluid-128-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/defcon-256-mp3\")\n    # player.enqueue(\"http://ice1.somafm.com/brfm-128-mp3\")\n\n    # player.dequeue(\"http://ice1.somafm.com/brfm-128-mp3\")\n\n    # print(player.queue_formatted)\n    # interval = 2\n    # player.play()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.next()\n    # time.sleep(interval)\n    # player.stop()\n\n",
+			"file": "radio/player.py",
+			"file_size": 15343,
+			"file_write_time": 131779795498389269,
+			"settings":
+			{
+				"buffer_size": 15256,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/atoav/Pokeball/pokeball/pub.py",
+			"settings":
+			{
+				"buffer_size": 557,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/atoav/Pokeball/pokeball/sub.py",
+			"settings":
+			{
+				"buffer_size": 1445,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "Packages/Rust Enhanced/RustEnhanced.sublime-build",
 	"build_system_choices":
@@ -111,6 +158,14 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"rename",
+				"Rename File"
+			],
+			[
+				"cancel",
+				"Build: Cancel"
+			],
 			[
 				"install ",
 				"Package Control: Install Package"
@@ -205,10 +260,11 @@
 	},
 	"expanded_folders":
 	[
-		"/home/atoav/radio/radio"
+		"/home/atoav/radio"
 	],
 	"file_history":
 	[
+		"/home/atoav/Blender/flaskbender/flaskbender/app.py",
 		"/home/atoav/Blender/watchdog/Cargo.toml",
 		"/home/atoav/Blender/notes.md",
 		"/home/atoav/Blender/flaskbender/notes.md",
@@ -217,7 +273,6 @@
 		"/home/atoav/.config/sublime-text-3/Local/Session.sublime_session",
 		"/home/atoav/Blender/flaskbender/flaskbender/helpers.py",
 		"/home/atoav/Blender/flaskbender/flaskbender/config.py",
-		"/home/atoav/Blender/flaskbender/flaskbender/app.py",
 		"/home/atoav/Blender/flaskbender/helpers.py",
 		"/home/atoav/Blender/flaskbender/config.py",
 		"/home/atoav/Blender/watchdog/src/main.rs",
@@ -270,7 +325,7 @@
 	],
 	"find":
 	{
-		"height": 26.0
+		"height": 46.0
 	},
 	"find_in_files":
 	{
@@ -284,6 +339,45 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"load",
+			"index",
+			"playlist",
+			"1",
+			"2",
+			"format",
+			"currentsong",
+			"Playlist",
+			"play",
+			"name",
+			"current",
+			"Added",
+			"add",
+			"playlist",
+			"volume",
+			"n_songs",
+			"currentsong",
+			"play",
+			"colume",
+			"single",
+			"source",
+			"target",
+			"uri",
+			"songs",
+			"URI",
+			"uri",
+			"elapsed",
+			"Albums",
+			"albums",
+			"Albums",
+			"albums",
+			"Artists",
+			"artists",
+			"next",
+			"replay_gain_mode",
+			"single",
+			"random",
+			"single",
+			"repeat",
 			"Blender.sublime",
 			"Blender",
 			"project",
@@ -355,8 +449,126 @@
 	"groups":
 	[
 		{
+			"selected": 2,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "notes.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 193,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								164,
+								164
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/MarkdownEditing/Markdown (Standard).tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "radio/player.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15256,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2544,
+								2544
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 51.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/atoav/Pokeball/pokeball/pub.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 557,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								525,
+								525
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/home/atoav/Pokeball/pokeball/sub.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1445,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								411,
+								411
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
 			]
 		}
 	],
